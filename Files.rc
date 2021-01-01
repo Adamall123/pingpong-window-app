@@ -1,0 +1,11 @@
+// RESNAME       RESTYPE      FILENAME
+// ---------------------------------------
+   soundAlert      Wave        "music/zapsplat_multimedia_alert_simple_basic.wav"
+   soundWon        Wave        "music/zapsplat_multimedia_game_sound_fun_arcade_organ_positive_win_expression.wav"
+   soundHi         Wave        "music/zapsplat_science_fiction_system_voice_male_says_welcome.wav"
+   soundPlay       Wave        "music/zapsplat_sport_ball_netball.wav"
+   ball          BITMAP      "img/ball.bmp"
+   paddle012     BITMAP      "img/paddle012.bmp"
+   paddle3       BITMAP      "img/paddle3.bmp"
+   paddle45      BITMAP      "img/paddle45.bmp"
+
