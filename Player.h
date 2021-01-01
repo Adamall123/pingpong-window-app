@@ -3,17 +3,22 @@
 
 class Player
 {
-    int userID;
     int points;
+    int amountOfHits;
+
 public:
-    Player(int points = 0){
+    Player(int points = 0, int amountOfHits = 0){
         this->points = points;
+        this->amountOfHits = amountOfHits;
     };
-    void setID(int noweID );
+
     void setPoints(int newPoints);
+    void setAmountOfHits(int newAmountOfHits);
     void addPoints(int newPoints);
-    int getID();
+    void addHit(int newHit);
+
     int getPoints();
+    int getAmountOfHits();
 
 };
 

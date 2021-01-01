@@ -27,11 +27,10 @@ bool reflectedOnPallete1 = false;
 bool reflectedOnPallete2 = true;
 bool hitFirstTime = true;
 
-int amountOFHits = 0, speedMoveOfPallete1= minimumSpeedOfPallete1, speedMoveOfPallete2 =minimumSpeedOfPallete2 ;
+int speedMoveOfPallete1= minimumSpeedOfPallete1, speedMoveOfPallete2 =minimumSpeedOfPallete2 ;
 
 Player* player1 = new Player;
 Player* player2 = new Player;
-//int pointsLeftPlayer = 0, pointsRightPlayer = 0;
 
 bool gameStarted = false;
 bool strike = false;
@@ -69,7 +68,8 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     //odbicie od lewej palety
     if(ballReflectionFromPallete(ImageBall, imagePallete1) && (reflectedOnPallete2 || hitFirstTime)) {
         x = -x ;
-        amountOFHits++;
+        //amountOFHits++;
+        player2->addHit(1);
         reflectedOnPallete1 = true;
         reflectedOnPallete2 = false;
         hitFirstTime = false;
@@ -81,7 +81,8 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     //odbicie od prawej palety
     if(ballReflectionFromPallete(ImageBall, imagePallete2) && (reflectedOnPallete1 || hitFirstTime) ) {
         x = -x ;
-        amountOFHits++;
+        //amountOFHits++;
+        player1->addHit(1);
         reflectedOnPallete1 = false;
         reflectedOnPallete2 = true;
         hitFirstTime = false;
@@ -92,13 +93,10 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     }
     //odbicie od prawej sciany lub lewej sciany-
     if(ImageBall->Left + ImageBall->Width >= background1->Width || ImageBall->Left - 5 <= background1->Left ) {
-        //jesli po lewej stronie
-        if (ImageBall->Left < background1->Width/2 - 1) {
-            //pointsRightPlayer++;
+        if (player2->getAmountOfHits() > player1->getAmountOfHits()) {
             player2->addPoints(1);
             LabelInfo->Caption = "Punkt Dla Gracza (Prawego) > " ;
         } else {
-            //pointsLeftPlayer++;
             player1->addPoints(1);
             LabelInfo->Caption = "< Punkt Dla Gracza (Lewego)" ;
         }
@@ -106,12 +104,12 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
         ImageBall->Visible = false;
         Button1->Visible = true;
         Button2->Visible = true;
-        LabelNumberOfHits->Caption = "Amount of Hits: " + IntToStr(amountOFHits);
+        LabelNumberOfHits->Caption = "Amount of Hits: " + IntToStr(player1->getAmountOfHits() + player2->getAmountOfHits());
         LabelNumberOfHits->Visible = true;
         LabelInfo->Visible = true;
         LabelCurrentResult->Caption = "Wynik: " +  IntToStr(player1->getPoints()) + ":" + IntToStr(player2->getPoints());
-        amountOFHits = 0;
-       // sndPlaySound("music/zapsplat_multimedia_alert_simple_basic.wav", SND_RESOURCE SND_ASYNC);
+        player1->setAmountOfHits(0);
+        player2->setAmountOfHits(0);
        PlaySound("soundAlert", HInstance, SND_RESOURCE | SND_ASYNC);
     }
 }
@@ -185,7 +183,9 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
         if(!Button1->ModalResult) {
             if(Application->MessageBox("Czy na pewno chcesz zaczac od nowa?","Potwierdz",MB_YESNO) == 6 )  {
                 strike=false;
-                amountOFHits = 0;
+                //amountOFHits = 0;
+                player1->setAmountOfHits(0);
+                player2->setAmountOfHits(0);
                 speedMoveOfPallete1 = minimumSpeedOfPallete1;
                 speedMoveOfPallete2 = minimumSpeedOfPallete2;
                 player1->setPoints(0);
