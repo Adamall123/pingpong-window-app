@@ -2,11 +2,13 @@
 #include <vcl.h>
 #pragma hdrstop
 #include "Unit1.h"
+#include "Player.cpp"
 #include "mmsystem.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TForm1 *Form1;
+
 int x,y;
 const int startBallPositionX = 500;
 const int startBallPositionY = 200;
@@ -26,7 +28,9 @@ bool reflectedOnPallete2 = true;
 bool hitFirstTime = true;
 
 int amountOFHits = 0, speedMoveOfPallete1= minimumSpeedOfPallete1, speedMoveOfPallete2 =minimumSpeedOfPallete2 ;
-int pointsLeftPlayer = 0, pointsRightPlayer = 0;
+
+Player* player1 = new Player;
+Player* player2 = new Player;
 
 bool gameStarted = false;
 bool strike = false;
@@ -50,6 +54,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
     ShowMessage(welcome+"\n\n"+control+"\n\n"+rules+"\n"+rules2);
     //sndPlaySound("music/zapsplat_science_fiction_system_voice_male_says_welcome.wav",SND_RESOURCE SND_ASYNC);
     PlaySound("soundHi", HInstance, SND_RESOURCE | SND_ASYNC);
+   // ShowMessage(IntToStr(player1.getPoints()));
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
@@ -88,10 +93,12 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     if(ImageBall->Left + ImageBall->Width >= background1->Width || ImageBall->Left - 5 <= background1->Left ) {
         //jesli po lewej stronie
         if (ImageBall->Left < background1->Width/2 - 1) {
-            pointsRightPlayer++;
+            //pointsRightPlayer++;
+            player2->addPoints(1);
             LabelInfo->Caption = "Punkt Dla Gracza (Prawego) > " ;
         } else {
-            pointsLeftPlayer++;
+            //pointsLeftPlayer++;
+            player1->addPoints(1);
             LabelInfo->Caption = "< Punkt Dla Gracza (Lewego)" ;
         }
         TimerBall->Enabled = false;
@@ -101,7 +108,7 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
         LabelNumberOfHits->Caption = "Amount of Hits: " + IntToStr(amountOFHits);
         LabelNumberOfHits->Visible = true;
         LabelInfo->Visible = true;
-        LabelCurrentResult->Caption = "Wynik: " +  IntToStr(pointsLeftPlayer) + ":" + IntToStr(pointsRightPlayer);
+        LabelCurrentResult->Caption = "Wynik: " +  IntToStr(player1->getPoints()) + ":" + IntToStr(player2->getPoints());
         amountOFHits = 0;
        // sndPlaySound("music/zapsplat_multimedia_alert_simple_basic.wav", SND_RESOURCE SND_ASYNC);
        PlaySound("soundAlert", HInstance, SND_RESOURCE | SND_ASYNC);
@@ -180,8 +187,8 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
                 amountOFHits = 0;
                 speedMoveOfPallete1 = minimumSpeedOfPallete1;
                 speedMoveOfPallete2 = minimumSpeedOfPallete2;
-                pointsLeftPlayer = 0;
-                pointsRightPlayer = 0;
+                player1->setPoints(0);
+                player2->setPoints(0);
                 LabelCurrentResult->Caption = "";
                 LabelInfo->Visible = false;
                 gameStarted = true;
@@ -205,11 +212,11 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
     imagePallete2->Left = startPallete2PositionX;
     imagePallete2->Top = startPallete12PositionY;
     countInfo->Left = startBallPositionX;
-    if(pointsLeftPlayer == pointsToWin || pointsRightPlayer == pointsToWin) {
+    if(player1->getPoints() == pointsToWin || player2->getPoints() == pointsToWin) {
         gameStarted = false;
         Button2->Visible = false;
         LabelInfo->Font->Size = 24;
-        if (pointsLeftPlayer > pointsRightPlayer)
+        if (player1->getPoints() > player2->getPoints())
             LabelInfo->Caption = "Wygral Gracz po lewej Stronie!";
         else
             LabelInfo->Caption = "Wygral Gracz po prawej Stronie!" ;
@@ -230,9 +237,9 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
 
     //depending on gathered points load shorten palletes
     AnsiString scopeLeftPoints, scopeRightPoints;
-    if(pointsLeftPlayer <=2)
+    if(player1->getPoints() <=2)
         scopeLeftPoints = "012";
-    else if (pointsLeftPlayer == 3) {
+    else if (player1->getPoints() == 3) {
         scopeLeftPoints = "3";
         speedMoveOfPallete1 = 40;
     } else {
@@ -240,9 +247,9 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
         speedMoveOfPallete1 = 50;
     }
 
-    if(pointsRightPlayer <=2)
+    if(player2->getPoints() <=2)
         scopeRightPoints = "012";
-    else if (pointsRightPlayer == 3) {
+    else if (player2->getPoints() == 3) {
         scopeRightPoints = "3";
         speedMoveOfPallete2 = 40;
     } else {
