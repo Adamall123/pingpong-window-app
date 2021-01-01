@@ -52,13 +52,10 @@ __fastcall TForm1::TForm1(TComponent* Owner)
     AnsiString rules = "Im dluzej odbijasz tym pilka szybciej sie przemiesza.Aby wygrac nalezy zdobyc 6 pkt.\nKazde 2 zdobyte punkty powoduja, ze paletka staje sie krotsza i szybsza w celu urozmaicenia gry.";
     AnsiString rules2 = "Wcisnij spacje aby uderzyc w pilke i poslac ja duzo szybciej to przeciwnika!" ;
     ShowMessage(welcome+"\n\n"+control+"\n\n"+rules+"\n"+rules2);
-    //sndPlaySound("music/zapsplat_science_fiction_system_voice_male_says_welcome.wav",SND_RESOURCE SND_ASYNC);
     PlaySound("soundHi", HInstance, SND_RESOURCE | SND_ASYNC);
-   // ShowMessage(IntToStr(player1.getPoints()));
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
-
     SpeedInfo->Caption ="Speed: " + IntToStr(abs(x)) + "0km/h";
     ImageBall->Left += x;
     ImageBall->Top += y;
@@ -68,12 +65,10 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     //odbicie od lewej palety
     if(ballReflectionFromPallete(ImageBall, imagePallete1) && (reflectedOnPallete2 || hitFirstTime)) {
         x = -x ;
-        //amountOFHits++;
-        player2->addHit(1);
+        player1->addHit(1);
         reflectedOnPallete1 = true;
         reflectedOnPallete2 = false;
         hitFirstTime = false;
-        //sndPlaySound("music/zapsplat_sport_ball_netball.wav", SND_ASYNC);
         PlaySound("soundPlay", HInstance, SND_RESOURCE | SND_ASYNC);
         if(strike)
             randomNormalHit->Enabled = true;
@@ -81,24 +76,22 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     //odbicie od prawej palety
     if(ballReflectionFromPallete(ImageBall, imagePallete2) && (reflectedOnPallete1 || hitFirstTime) ) {
         x = -x ;
-        //amountOFHits++;
-        player1->addHit(1);
+        player2->addHit(1);
         reflectedOnPallete1 = false;
         reflectedOnPallete2 = true;
         hitFirstTime = false;
-        //sndPlaySound("music/zapsplat_sport_ball_netball.wav", SND_ASYNC);
         PlaySound("soundPlay", HInstance, SND_RESOURCE | SND_ASYNC);
         if(strike)
             randomNormalHit->Enabled = true;
     }
     //odbicie od prawej sciany lub lewej sciany-
     if(ImageBall->Left + ImageBall->Width >= background1->Width || ImageBall->Left - 5 <= background1->Left ) {
-        if (player2->getAmountOfHits() > player1->getAmountOfHits()) {
-            player2->addPoints(1);
-            LabelInfo->Caption = "Punkt Dla Gracza (Prawego) > " ;
-        } else {
+        if (player1->getAmountOfHits() > player2->getAmountOfHits()) {
             player1->addPoints(1);
             LabelInfo->Caption = "< Punkt Dla Gracza (Lewego)" ;
+        } else {
+            player2->addPoints(1);
+            LabelInfo->Caption = "Punkt Dla Gracza (Prawego) >" ;
         }
         TimerBall->Enabled = false;
         ImageBall->Visible = false;
@@ -107,7 +100,7 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
         LabelNumberOfHits->Caption = "Amount of Hits: " + IntToStr(player1->getAmountOfHits() + player2->getAmountOfHits());
         LabelNumberOfHits->Visible = true;
         LabelInfo->Visible = true;
-        LabelCurrentResult->Caption = "Wynik: " +  IntToStr(player1->getPoints()) + ":" + IntToStr(player2->getPoints());
+        LabelCurrentResult->Caption = "Wynik: " +  IntToStr(player2->getPoints()) + ":" + IntToStr(player1->getPoints());
         player1->setAmountOfHits(0);
         player2->setAmountOfHits(0);
        PlaySound("soundAlert", HInstance, SND_RESOURCE | SND_ASYNC);
@@ -222,9 +215,7 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
         else
             LabelInfo->Caption = "Wygral Gracz po prawej Stronie!" ;
         LabelInfo->Visible = true;
-        //sndPlaySound("music/zapsplat_multimedia_game_sound_fun_arcade_organ_positive_win_expression.wav", SND_ASYNC);
         PlaySound("soundWon", HInstance, SND_RESOURCE | SND_ASYNC);
-
     }
     ImageBall->Visible = true;
     //Start game
@@ -235,7 +226,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
         Button1->Visible = false;
         Button2->Visible = false;
     }
-
     //depending on gathered points load shorten palletes
     AnsiString scopeLeftPoints, scopeRightPoints;
     if(player1->getPoints() <=2)
@@ -247,7 +237,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
         scopeLeftPoints = "45";
         speedMoveOfPallete1 = 50;
     }
-
     if(player2->getPoints() <=2)
         scopeRightPoints = "012";
     else if (player2->getPoints() == 3) {

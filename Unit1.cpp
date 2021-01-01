@@ -65,7 +65,7 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     //odbicie od lewej palety
     if(ballReflectionFromPallete(ImageBall, imagePallete1) && (reflectedOnPallete2 || hitFirstTime)) {
         x = -x ;
-        player2->addHit(1);
+        player1->addHit(1);
         reflectedOnPallete1 = true;
         reflectedOnPallete2 = false;
         hitFirstTime = false;
@@ -76,7 +76,7 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     //odbicie od prawej palety
     if(ballReflectionFromPallete(ImageBall, imagePallete2) && (reflectedOnPallete1 || hitFirstTime) ) {
         x = -x ;
-        player1->addHit(1);
+        player2->addHit(1);
         reflectedOnPallete1 = false;
         reflectedOnPallete2 = true;
         hitFirstTime = false;
@@ -86,12 +86,12 @@ void __fastcall TForm1::TimerBallTimer(TObject *Sender) {
     }
     //odbicie od prawej sciany lub lewej sciany-
     if(ImageBall->Left + ImageBall->Width >= background1->Width || ImageBall->Left - 5 <= background1->Left ) {
-        if (player2->getAmountOfHits() > player1->getAmountOfHits()) {
-            player2->addPoints(1);
-            LabelInfo->Caption = "Punkt Dla Gracza (Prawego) > " ;
-        } else {
+        if (player1->getAmountOfHits() > player2->getAmountOfHits()) {
             player1->addPoints(1);
             LabelInfo->Caption = "< Punkt Dla Gracza (Lewego)" ;
+        } else {
+            player2->addPoints(1);
+            LabelInfo->Caption = "Punkt Dla Gracza (Prawego) >" ;
         }
         TimerBall->Enabled = false;
         ImageBall->Visible = false;
@@ -237,7 +237,6 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
         scopeLeftPoints = "45";
         speedMoveOfPallete1 = 50;
     }
-
     if(player2->getPoints() <=2)
         scopeRightPoints = "012";
     else if (player2->getPoints() == 3) {
